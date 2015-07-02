@@ -1,9 +1,11 @@
 package org.frank.rest4j.provider;
 
+import org.frank.rest4j.annotation.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import javax.annotation.PostConstruct;
 import java.util.Set;
@@ -26,9 +28,13 @@ public class RestInterfacesScanner {
     public void init(){
         Logger.debug("Started initializing of scanner bean.");
 
-        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true);
+        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningRestInterfaceProvider();
+
+System.out.println("Start");
         Set<BeanDefinition> components = provider.findCandidateComponents(basePackage);
         for (BeanDefinition component : components) {
+
+            System.out.println(component.getBeanClassName());
             Logger.debug(component.getBeanClassName());
         }
     }
