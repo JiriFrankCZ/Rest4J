@@ -12,7 +12,6 @@ public class ClassPathScanningRestInterfaceProvider extends ClassPathScanningCan
 
     public ClassPathScanningRestInterfaceProvider() {
         super(false);
-
         addIncludeFilter(new AnnotationTypeFilter(RestClient.class, false));
     }
 

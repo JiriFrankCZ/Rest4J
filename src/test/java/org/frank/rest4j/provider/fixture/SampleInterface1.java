@@ -7,4 +7,5 @@ import org.frank.rest4j.annotation.RestClient;
  */
 @RestClient
 public interface SampleInterface1 {
+    void test1();
 }
