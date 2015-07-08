@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns="http://www.jirifrank.eu.org/schema/rest4j"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.jirifrank.eu.org/schema/rest4j"
+            elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:complexType name="repositories">
+        <xsd:attribute name="basePackage" type="xsd:string" />
+    </xsd:complexType>
+
+</xsd:schema>

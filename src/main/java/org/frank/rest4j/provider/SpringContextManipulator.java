@@ -1,6 +1,6 @@
 package org.frank.rest4j.provider;
 
-import org.frank.rest4j.RestClient;
+import org.frank.rest4j.general.RestClientProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -18,7 +18,7 @@ public class SpringContextManipulator implements BeanFactoryPostProcessor {
         this.configurableListableBeanFactory = configurableListableBeanFactory;
     }
 
-    public void addServiceToContext(String name, RestClient serviceClassInstance){
+    public void addServiceToContext(String name, RestClientProxy serviceClassInstance) {
         configurableListableBeanFactory.registerSingleton(name, serviceClassInstance);
     }
 }
