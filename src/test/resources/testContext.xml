@@ -9,6 +9,6 @@
 
 
        <context:component-scan base-package="org.frank.rest4j.repository.fixture.component"/>
-       <rest4j:repositories basePackage="org.frank.rest4j.repository.fixture.interfaces"/>
+       <rest4j:repositories basePackage="org.frank.rest4j.repository.fixture.source"/>
 
 </beans>

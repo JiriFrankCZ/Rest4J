@@ -7,7 +7,6 @@ import org.frank.rest4j.repository.GenericMethodInvokingFactoryBean;
 import org.frank.rest4j.util.CommonsUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
 import org.w3c.dom.Element;
 
-import java.util.Arrays;
 import java.util.Set;
 
 
@@ -47,7 +45,7 @@ public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
 
             String basePackage = element.getAttribute(BASE_PACKAGE_ATTRIBUTE_NAME);
             Assert.notNull(basePackage, "Base package has to be defined in every case.");
-            Logger.info("Base package was set to {} and will be scaned for RestRespository interfaces.", basePackage);
+            Logger.info("Base package was set to {} and will be scaned for RestRespository source.", basePackage);
 
             Set<String> interfaces = componentsScanner.scan(basePackage);
 
