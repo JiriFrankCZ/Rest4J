@@ -1,7 +1,7 @@
-package org.frank.rest4j.repository.fixture.component;
+package org.frank.rest4j.fixture.component;
 
 
-import org.frank.rest4j.repository.fixture.source.SampleInterface1;
+import org.frank.rest4j.fixture.source.SampleInterface1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

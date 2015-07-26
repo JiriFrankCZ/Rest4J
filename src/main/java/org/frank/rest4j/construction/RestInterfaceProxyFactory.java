@@ -1,6 +1,6 @@
 package org.frank.rest4j.construction;
 
-import org.frank.rest4j.annotation.RestClient;
+import org.frank.rest4j.annotation.Client;
 import org.frank.rest4j.logic.RestClientMethodsHandler;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ public class RestInterfaceProxyFactory{
 
         T restClient = (T) Proxy.newProxyInstance(
                 RestInterfaceProxyFactory.class.getClassLoader(),
-                new Class[]{interfaceClass, RestClient.class,},
+                new Class[]{interfaceClass, Client.class,},
                 new RestClientMethodsHandler(interfaceClass)
         );
 

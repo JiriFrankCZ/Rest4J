@@ -1,8 +1,8 @@
 package org.frank.rest4j.repository;
 
-import org.frank.rest4j.repository.fixture.source.SampleInterface1;
+import org.frank.rest4j.fixture.source.SampleInterface1;
 import org.junit.Assert;
-import org.frank.rest4j.annotation.RestClient;
+import org.frank.rest4j.annotation.Client;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -13,13 +13,13 @@ import java.util.Set;
  */
 public class ComponensScannerTest {
 
-    private static final String PACKAGE_TO_TEST = "org.frank.rest4j.repository.fixture.source";
+    private static final String PACKAGE_TO_TEST = "org.frank.rest4j.fixture.source";
 
     private static ComponentsScanner componentsScanner;
 
     @BeforeClass
     public static void setUp(){
-        componentsScanner = new ComponentsScanner(RestClient.class);
+        componentsScanner = new ComponentsScanner(Client.class);
     }
 
     @Test(expected = IllegalArgumentException.class)

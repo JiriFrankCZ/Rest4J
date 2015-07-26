@@ -1,8 +1,8 @@
 package org.frank.rest4j.logic;
 
-import org.frank.rest4j.annotation.RestAction;
-import org.frank.rest4j.annotation.RestClient;
-import org.frank.rest4j.annotation.RestParam;
+import org.frank.rest4j.annotation.Action;
+import org.frank.rest4j.annotation.Client;
+import org.frank.rest4j.annotation.Param;
 import org.frank.rest4j.constant.Format;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +30,10 @@ public class RestClientMethodsHandler implements InvocationHandler {
     private Map<String, RestMethod> methodsMap;
 
     public RestClientMethodsHandler(Class interfaceClass) {
-        RestClient restClient = (RestClient) interfaceClass.getAnnotation(RestClient.class);
+        Client client = (Client) interfaceClass.getAnnotation(Client.class);
 
-        serverUrl = restClient.url();
-        format = restClient.format();
+        serverUrl = client.url();
+        format = client.format();
 
         methodsMap = createMethodMap(interfaceClass);
     }
@@ -53,7 +53,7 @@ public class RestClientMethodsHandler implements InvocationHandler {
      * This method prepare parameter map (key value pairs - name of parameter and parameter value)
      * for later replacement. Regarding to the fact that is not possible to obtain method parameter name
      * during runtime without additional debug information passed by compiler, this method tries to do it this way
-     * and if not success it tries to resolve it from annotation RestParam
+     * and if not success it tries to resolve it from annotation Param
      * 
      * @param method Method itself with annotation
      * @param args Real arguments from call
@@ -71,9 +71,9 @@ public class RestClientMethodsHandler implements InvocationHandler {
                 Annotation[] parameterAnnotations = parametersAnnotations[i];
 
                 if(parameterAnnotations.length > 0){
-                    RestParam restParam = (RestParam) parameterAnnotations[0];
+                    Param param = (Param) parameterAnnotations[0];
 
-                    parameterMap.put(restParam.value(), args[i]);
+                    parameterMap.put(param.value(), args[i]);
                 }
             }
 
@@ -99,12 +99,12 @@ public class RestClientMethodsHandler implements InvocationHandler {
 
         Method[] clientMethods = sourceInterface.getMethods();
         for(Method method : clientMethods){
-            RestAction restAction = method.getAnnotation(RestAction.class);
+            Action action = method.getAnnotation(Action.class);
 
-            if(restAction != null){
+            if(action != null){
                 RestMethod restMethod = new RestMethod();
-                restMethod.setUrlFragment(restAction.urlFragment());
-                restMethod.setMethod(restAction.method());
+                restMethod.setUrlFragment(action.urlFragment());
+                restMethod.setMethod(action.method());
                 restMethod.setReturnType(method.getReturnType().getName().equals("void") ? null : method.getReturnType());
                 tempMethodMap.put(method.getName(), restMethod);
             }

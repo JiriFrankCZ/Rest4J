@@ -1,4 +1,4 @@
-package org.frank.rest4j.repository.fixture.domain;
+package org.frank.rest4j.fixture.domain;
 
 /**
  * Created by FrankJ on 22.7.2015.

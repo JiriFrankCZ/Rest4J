@@ -1,6 +1,6 @@
 package org.frank.rest4j.repository.config.xml;
 
-import org.frank.rest4j.annotation.RestClient;
+import org.frank.rest4j.annotation.Client;
 import org.frank.rest4j.construction.RestInterfaceProxyFactory;
 import org.frank.rest4j.repository.ComponentsScanner;
 import org.frank.rest4j.repository.GenericMethodInvokingFactoryBean;
@@ -25,7 +25,7 @@ public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
 
     private final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestRepositoryNamespaceHandler.class);
 
-    private static final Class DEFAULT_ANNOTATION_FILTER = RestClient.class;
+    private static final Class DEFAULT_ANNOTATION_FILTER = Client.class;
 
     private static final String BASE_PACKAGE_ATTRIBUTE_NAME = "basePackage";
     private static final Class FACTORY_CLASS = RestInterfaceProxyFactory.class;
@@ -67,6 +67,13 @@ public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
+    /**
+     * Creates definition for factory GenericMethodInvokingFactoryBean which then creates dynamic proxy
+     * based on interfaces provided as param.
+     *
+     * @param interfaceName
+     * @return Factory bean definition
+     */
     private BeanDefinition createBeanDefinition(String interfaceName){
 
         BeanDefinition beanDefinition = null;

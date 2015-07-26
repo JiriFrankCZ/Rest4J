@@ -8,7 +8,7 @@
        http://www.jirifrank.eu/schema/rest4j http://www.jirifrank.eu/schema/rest4j-1.0.xsd">
 
 
-       <context:component-scan base-package="org.frank.rest4j.repository.fixture.component"/>
-       <rest4j:repositories basePackage="org.frank.rest4j.repository.fixture.source"/>
+       <context:component-scan base-package="org.frank.rest4j.fixture.component"/>
+       <rest4j:repositories basePackage="org.frank.rest4j.fixture.source"/>
 
 </beans>

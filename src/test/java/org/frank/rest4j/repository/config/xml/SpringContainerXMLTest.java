@@ -1,6 +1,6 @@
 package org.frank.rest4j.repository.config.xml;
 
-import org.frank.rest4j.repository.fixture.source.SampleInterface1;
+import org.frank.rest4j.fixture.source.SampleInterface1;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
