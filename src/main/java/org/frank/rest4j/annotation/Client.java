@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target(ElementType.TYPE)
-public @interface RestClient {
+public @interface Client {
     String url();
     Format format() default Format.JSON;
 }

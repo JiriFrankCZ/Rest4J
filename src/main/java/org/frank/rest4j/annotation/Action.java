@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface RestAction {
+public @interface Action {
     String urlFragment();
     HttpMethod method() default HttpMethod.GET;
 }
