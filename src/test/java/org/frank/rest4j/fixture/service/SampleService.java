@@ -15,6 +15,7 @@ import javax.ws.rs.Path;
 public class SampleService {
 
     @GET
+    @Path("/clients/{id}")
     public Client clients(int id) {
         Client client = new Client();
         client.setId(id);

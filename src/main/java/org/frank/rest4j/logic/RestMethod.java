@@ -1,6 +1,7 @@
 package org.frank.rest4j.logic;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 /**
  * Created by FrankJ on 22.7.2015.
@@ -10,6 +11,8 @@ public class RestMethod {
     private String urlFragment;
 
     private HttpMethod method;
+
+    private HttpStatus successStatus;
 
     private Class returnType;
 
@@ -39,5 +42,13 @@ public class RestMethod {
 
     public String getLink(String server){
         return server + urlFragment;
+    }
+
+    public HttpStatus getSuccessStatus() {
+        return successStatus;
+    }
+
+    public void setSuccessStatus(HttpStatus successStatus) {
+        this.successStatus = successStatus;
     }
 }

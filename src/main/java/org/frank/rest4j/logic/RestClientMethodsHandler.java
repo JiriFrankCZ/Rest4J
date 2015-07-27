@@ -4,6 +4,7 @@ import org.frank.rest4j.annotation.Action;
 import org.frank.rest4j.annotation.Client;
 import org.frank.rest4j.annotation.Param;
 import org.frank.rest4j.constant.Format;
+import org.frank.rest4j.exception.MethodCallException;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -45,8 +46,20 @@ public class RestClientMethodsHandler implements InvocationHandler {
         String actionLink = restMethod.getLink(serverUrl);
 
         ResponseEntity responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method,args));
+        if(responseEntity.getStatusCode().equals(restMethod.getSuccessStatus())){
+            return responseEntity.getBody();
+        }else{
+            MethodCallException methodCallException = new MethodCallException(
+                    restMethod.getSuccessStatus(),
+                    responseEntity.getStatusCode(),
+                    responseEntity.getHeaders(),
+                    responseEntity.getBody()
+            );
 
-        return responseEntity.getBody();
+            Logger.error("Error occured during method call", methodCallException);
+
+            throw methodCallException;
+        }
     }
 
     /**
