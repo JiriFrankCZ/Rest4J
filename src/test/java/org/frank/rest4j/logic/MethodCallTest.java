@@ -1,9 +1,11 @@
 package org.frank.rest4j.logic;
 
-import com.sun.jersey.test.framework.JerseyTest;
 import org.frank.rest4j.fixture.domain.Client;
 import org.frank.rest4j.fixture.service.SampleService;
 import org.frank.rest4j.fixture.source.SampleInterface1;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +25,11 @@ public class MethodCallTest extends JerseyTest {
     @Autowired
     private SampleInterface1 sampleInterface1;
 
-    public MethodCallTest() throws Exception {
-        super("org.frank.rest4j.fixture.service");
+    @Override
+    protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "8080");
+        return new ResourceConfig(SampleService.class);
     }
-
 
 
     @Test

@@ -4,19 +4,20 @@ import org.frank.rest4j.annotation.Action;
 import org.frank.rest4j.annotation.Param;
 import org.frank.rest4j.fixture.domain.Client;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 
 /**
  * Created by Jiøí on 26. 7. 2015.
  */
 
-@Path("test")
+@Path("/test")
 public class SampleService {
 
     @GET
     @Path("/clients/{id}")
-    public Client clients(int id) {
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Client clients(@PathParam("id") int id) {
         Client client = new Client();
         client.setId(id);
         client.setName("Test client");

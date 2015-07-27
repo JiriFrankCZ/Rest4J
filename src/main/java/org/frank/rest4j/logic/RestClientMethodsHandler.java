@@ -33,19 +33,22 @@ public class RestClientMethodsHandler implements InvocationHandler {
     public RestClientMethodsHandler(Class interfaceClass) {
         Client client = (Client) interfaceClass.getAnnotation(Client.class);
 
-        serverUrl = client.url();
+        serverUrl = client.value();
         format = client.format();
 
         methodsMap = createMethodMap(interfaceClass);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Logger.info("Method {} called from {} with {}.", method.getName(), proxy.getClass().getName(), args);
+        Logger.info("Method {} called with {} parametres.", method.getName(), args);
 
         RestMethod restMethod = methodsMap.get(method.getName());
         String actionLink = restMethod.getLink(serverUrl);
 
+        Logger.debug("HTTP/{} {} {}", restMethod.getMethod(), actionLink, args);
+
         ResponseEntity responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method,args));
+
         if(responseEntity.getStatusCode().equals(restMethod.getSuccessStatus())){
             return responseEntity.getBody();
         }else{
@@ -116,8 +119,9 @@ public class RestClientMethodsHandler implements InvocationHandler {
 
             if(action != null){
                 RestMethod restMethod = new RestMethod();
-                restMethod.setUrlFragment(action.urlFragment());
+                restMethod.setUrlFragment(action.value());
                 restMethod.setMethod(action.method());
+                restMethod.setSuccessStatus(action.successStatus());
                 restMethod.setReturnType(method.getReturnType().getName().equals("void") ? null : method.getReturnType());
                 tempMethodMap.put(method.getName(), restMethod);
             }

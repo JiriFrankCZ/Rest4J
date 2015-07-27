@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.METHOD)
 public @interface Action {
-    String urlFragment();
+    String value();
     HttpStatus successStatus();
     HttpMethod method() default HttpMethod.GET;
 }

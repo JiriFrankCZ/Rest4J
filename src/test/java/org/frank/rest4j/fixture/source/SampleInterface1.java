@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 /**
  * Created by Jiøí on 1. 7. 2015.
  */
-@Client(url = "http://localhost:8080/test")
+@Client("http://localhost:8080/test")
 public interface SampleInterface1 {
 
-    @Action(urlFragment = "/clients/{id}", successStatus = HttpStatus.ACCEPTED)
+    @Action(value = "/clients/{id}", successStatus = HttpStatus.OK)
     org.frank.rest4j.fixture.domain.Client getClient(@Param("id") int id);
 }
