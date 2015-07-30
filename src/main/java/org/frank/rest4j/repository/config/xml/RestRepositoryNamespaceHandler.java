@@ -23,76 +23,76 @@ import java.util.Set;
  */
 public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
 
-    private final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestRepositoryNamespaceHandler.class);
+	private final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestRepositoryNamespaceHandler.class);
 
-    private static final Class DEFAULT_ANNOTATION_FILTER = Client.class;
+	private static final Class DEFAULT_ANNOTATION_FILTER = Client.class;
 
-    private static final String BASE_PACKAGE_ATTRIBUTE_NAME = "basePackage";
-    private static final Class FACTORY_CLASS = RestInterfaceProxyFactory.class;
-    private static final String FACTORY_METHOD_NAME = "createInstance";
+	private static final String BASE_PACKAGE_ATTRIBUTE_NAME = "basePackage";
+	private static final Class FACTORY_CLASS = RestInterfaceProxyFactory.class;
+	private static final String FACTORY_METHOD_NAME = "createInstance";
 
 
-    private ComponentsScanner componentsScanner;
+	private ComponentsScanner componentsScanner;
 
-    public void init() {
-        componentsScanner = new ComponentsScanner(DEFAULT_ANNOTATION_FILTER);
-        registerBeanDefinitionParser("repositories", new RestRepositoryBeanDefinitionParser());
-    }
+	public void init() {
+		componentsScanner = new ComponentsScanner(DEFAULT_ANNOTATION_FILTER);
+		registerBeanDefinitionParser("repositories", new RestRepositoryBeanDefinitionParser());
+	}
 
-    private class RestRepositoryBeanDefinitionParser implements BeanDefinitionParser {
+	private class RestRepositoryBeanDefinitionParser implements BeanDefinitionParser {
 
-        public BeanDefinition parse(Element element, ParserContext parserContext) {
+		public BeanDefinition parse(Element element, ParserContext parserContext) {
 
-            String basePackage = element.getAttribute(BASE_PACKAGE_ATTRIBUTE_NAME);
-            Assert.notNull(basePackage, "Base package has to be defined in every case.");
-            Logger.info("Base package was set to {} and will be scaned for RestRespository source.", basePackage);
+			String basePackage = element.getAttribute(BASE_PACKAGE_ATTRIBUTE_NAME);
+			Assert.notNull(basePackage, "Base package has to be defined in every case.");
+			Logger.info("Base package was set to {} and will be scaned for RestRespository source.", basePackage);
 
-            Set<String> interfaces = componentsScanner.scan(basePackage);
+			Set<String> interfaces = componentsScanner.scan(basePackage);
 
-            if(interfaces != null && interfaces.size() > 0){
-                BeanDefinitionRegistry beanDefinitionRegistry = parserContext.getRegistry();
+			if (interfaces != null && interfaces.size() > 0) {
+				BeanDefinitionRegistry beanDefinitionRegistry = parserContext.getRegistry();
 
-                for(String interfaceName : interfaces){
-                    BeanDefinition beanDefinition = createBeanDefinition(interfaceName);
+				for (String interfaceName : interfaces) {
+					BeanDefinition beanDefinition = createBeanDefinition(interfaceName);
 
-                    if(beanDefinition != null){
-                        beanDefinitionRegistry.registerBeanDefinition(
-                                CommonsUtil.getClassNameFromFQN(interfaceName),
-                                beanDefinition
-                        );
-                    }
-                }
-            }
-            return null;
-        }
-    }
+					if (beanDefinition != null) {
+						beanDefinitionRegistry.registerBeanDefinition(
+								CommonsUtil.getClassNameFromFQN(interfaceName),
+								beanDefinition
+						);
+					}
+				}
+			}
+			return null;
+		}
+	}
 
-    /**
-     * Creates definition for factory GenericMethodInvokingFactoryBean which then creates dynamic proxy
-     * based on interfaces provided as param.
-     *
-     * @param interfaceName
-     * @return Factory bean definition
-     */
-    private BeanDefinition createBeanDefinition(String interfaceName){
+	/**
+	 * Creates definition for factory GenericMethodInvokingFactoryBean which then creates dynamic proxy
+	 * based on interfaces provided as param.
+	 *
+	 * @param interfaceName
+	 * @return Factory bean definition
+	 */
+	private BeanDefinition createBeanDefinition(String interfaceName) {
 
-        BeanDefinition beanDefinition = null;
-        try {
-            Class interfaceClass = Class.forName(interfaceName);
+		BeanDefinition beanDefinition = null;
+		try {
+			Class interfaceClass = Class.forName(interfaceName);
 
-            beanDefinition = BeanDefinitionBuilder
-                .rootBeanDefinition(GenericMethodInvokingFactoryBean.class)
-                    .addPropertyValue("targetClass", FACTORY_CLASS)
-                    .addPropertyValue("targetMethod", FACTORY_METHOD_NAME)
-                    .addPropertyValue("targetType", interfaceClass)
-                    .addPropertyValue("arguments", interfaceClass)
-                    .setLazyInit(false)
-                    .getBeanDefinition();
+			beanDefinition = BeanDefinitionBuilder
+					.rootBeanDefinition(GenericMethodInvokingFactoryBean.class)
+					.addPropertyValue("targetClass", FACTORY_CLASS)
+					.addPropertyValue("targetMethod", FACTORY_METHOD_NAME)
+					.addPropertyValue("targetType", interfaceClass)
+					.addPropertyValue("arguments", interfaceClass)
+					.setLazyInit(false)
+					.getBeanDefinition();
 
-        } catch (ClassNotFoundException e) {
-            Logger.error("Interface couldn´t be resolved for {}.",interfaceName);
-        }
+		} catch (ClassNotFoundException e) {
+			Logger.error("Interface couldn´t be resolved for {}.", interfaceName);
+		}
 
-        return beanDefinition;
-    }
+		return beanDefinition;
+	}
 }

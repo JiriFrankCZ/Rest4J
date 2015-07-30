@@ -9,7 +9,9 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.METHOD)
 public @interface Action {
-    String value();
-    HttpStatus successStatus();
-    HttpMethod method() default HttpMethod.GET;
+	String value();
+
+	HttpStatus successStatus();
+
+	HttpMethod method() default HttpMethod.GET;
 }

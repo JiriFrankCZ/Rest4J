@@ -6,22 +6,22 @@ import org.springframework.http.HttpStatus;
 /**
  * Created by Jiøí on 27. 7. 2015.
  */
-public class MethodCallException extends Exception {
+public class MethodCallException extends RuntimeException {
 
-    private HttpHeaders httpHeaders;
-    private Object httpBody;
+	private HttpHeaders httpHeaders;
+	private Object httpBody;
 
-    public MethodCallException(HttpStatus expected, HttpStatus returned, HttpHeaders httpHeaders, Object httpBody) {
-        super("Method call failed, expected " + expected + ", but got " + returned + ".");
-        this.httpHeaders = httpHeaders;
-        this.httpBody = httpBody;
-    }
+	public MethodCallException(HttpStatus expected, HttpStatus returned, HttpHeaders httpHeaders, Object httpBody) {
+		super("Method call failed, expected " + expected + ", but got " + returned + ".");
+		this.httpHeaders = httpHeaders;
+		this.httpBody = httpBody;
+	}
 
-    public HttpHeaders getHttpHeaders() {
-        return httpHeaders;
-    }
+	public HttpHeaders getHttpHeaders() {
+		return httpHeaders;
+	}
 
-    public Object getHttpBody() {
-        return httpBody;
-    }
+	public Object getHttpBody() {
+		return httpBody;
+	}
 }

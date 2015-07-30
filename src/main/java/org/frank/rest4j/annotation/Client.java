@@ -12,6 +12,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 public @interface Client {
-    String value();
-    Format format() default Format.JSON;
+	String value();
+
+	Format format() default Format.JSON;
 }

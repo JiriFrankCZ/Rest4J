@@ -6,5 +6,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(value = RetentionPolicy.RUNTIME)
 //@Import()
 public @interface EnableRestProxies {
-    String name();
+	String name();
 }

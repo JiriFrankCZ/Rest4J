@@ -11,28 +11,28 @@ import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
  */
 public class GenericMethodInvokingFactoryBean extends MethodInvokingFactoryBean {
 
-    private Class<?> targetType;
+	private Class<?> targetType;
 
-    public Class<?> getTargetType() {
-        return targetType;
-    }
+	public Class<?> getTargetType() {
+		return targetType;
+	}
 
-    public void setTargetType(Class<?> targetType) {
-        this.targetType = targetType;
-    }
+	public void setTargetType(Class<?> targetType) {
+		this.targetType = targetType;
+	}
 
-    /**
-     * If target type is manualy defined, than return this class, otherwise
-     * return type according to target type of factory, if it´s been initialized.
-     *
-     * @return Type for container
-     */
-    @Override
-    public Class<?> getObjectType() {
-        if(targetType == null){
-            return super.getObjectType();
-        }
+	/**
+	 * If target type is manualy defined, than return this class, otherwise
+	 * return type according to target type of factory, if it´s been initialized.
+	 *
+	 * @return Type for container
+	 */
+	@Override
+	public Class<?> getObjectType() {
+		if (targetType == null) {
+			return super.getObjectType();
+		}
 
-        return targetType;
-    }
+		return targetType;
+	}
 }

@@ -12,31 +12,31 @@ import java.util.Set;
  *
  */
 public class ComponentsScanner {
-    private Class annotationFilter;
+	private Class annotationFilter;
 
-    private final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComponentsScanner.class);
+	private final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComponentsScanner.class);
 
-    private String basePackage;
+	private String basePackage;
 
-    public ComponentsScanner(Class annotationFilter) {
-        this.annotationFilter = annotationFilter;
-    }
+	public ComponentsScanner(Class annotationFilter) {
+		this.annotationFilter = annotationFilter;
+	}
 
-    public Set<String> scan(String basePackage){
-        Logger.debug("Started initializing of scanner bean.");
+	public Set<String> scan(String basePackage) {
+		Logger.debug("Started initializing of scanner bean.");
 
-        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningRestInterfaceProvider(annotationFilter);
-        Set<BeanDefinition> beanDefinitions = provider.findCandidateComponents(basePackage);
+		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningRestInterfaceProvider(annotationFilter);
+		Set<BeanDefinition> beanDefinitions = provider.findCandidateComponents(basePackage);
 
-        Set<String> resolvedInterfaceList = new HashSet<String>(beanDefinitions.size());
+		Set<String> resolvedInterfaceList = new HashSet<String>(beanDefinitions.size());
 
-        for (BeanDefinition beanDefinition : beanDefinitions) {
-            String className = beanDefinition.getBeanClassName();
+		for (BeanDefinition beanDefinition : beanDefinitions) {
+			String className = beanDefinition.getBeanClassName();
 
-            Logger.debug("Resolved interface " + className);
-            resolvedInterfaceList.add(className);
-        }
+			Logger.debug("Resolved interface " + className);
+			resolvedInterfaceList.add(className);
+		}
 
-        return resolvedInterfaceList;
-    }
+		return resolvedInterfaceList;
+	}
 }

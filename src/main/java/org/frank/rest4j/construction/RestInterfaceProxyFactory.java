@@ -9,19 +9,19 @@ import java.lang.reflect.Proxy;
 /**
  * Created by FrankJ on 8.7.2015.
  */
-public class RestInterfaceProxyFactory{
+public class RestInterfaceProxyFactory {
 
-    private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestInterfaceProxyFactory.class);
+	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestInterfaceProxyFactory.class);
 
-    public static <T> T createInstance(Class<T> interfaceClass) throws ClassNotFoundException {
-        Logger.info("Started creating proxy for interface {}.", interfaceClass.getCanonicalName());
+	public static <T> T createInstance(Class<T> interfaceClass) throws ClassNotFoundException {
+		Logger.info("Started creating proxy for interface {}.", interfaceClass.getCanonicalName());
 
-        T restClient = (T) Proxy.newProxyInstance(
-                RestInterfaceProxyFactory.class.getClassLoader(),
-                new Class[]{interfaceClass, Client.class,},
-                new RestClientMethodsHandler(interfaceClass)
-        );
+		T restClient = (T) Proxy.newProxyInstance(
+				RestInterfaceProxyFactory.class.getClassLoader(),
+				new Class[]{interfaceClass, Client.class,},
+				new RestClientMethodsHandler(interfaceClass)
+		);
 
-        return restClient;
-    }
+		return restClient;
+	}
 }

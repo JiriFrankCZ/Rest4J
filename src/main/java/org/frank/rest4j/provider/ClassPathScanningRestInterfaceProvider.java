@@ -9,13 +9,13 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  */
 public class ClassPathScanningRestInterfaceProvider extends ClassPathScanningCandidateComponentProvider {
 
-    public ClassPathScanningRestInterfaceProvider(Class annotation) {
-        super(false);
-        addIncludeFilter(new AnnotationTypeFilter(annotation, false));
-    }
+	public ClassPathScanningRestInterfaceProvider(Class annotation) {
+		super(false);
+		addIncludeFilter(new AnnotationTypeFilter(annotation, false));
+	}
 
-    @Override
-    protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-        return beanDefinition.getMetadata().isInterface();
-    }
+	@Override
+	protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
+		return beanDefinition.getMetadata().isInterface();
+	}
 }

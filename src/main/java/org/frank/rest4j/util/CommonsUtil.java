@@ -7,68 +7,68 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  Common used utilities exposed via static methods
+ * Common used utilities exposed via static methods
  */
 public class CommonsUtil {
 
-    // Pattern that matches {test}, {pokus2}, {parameterTest}...
-    private static final Pattern parameterPattern = Pattern.compile("\\{([^}]+)\\}");
+	// Pattern that matches {test}, {pokus2}, {parameterTest}...
+	private static final Pattern parameterPattern = Pattern.compile("\\{([^}]+)\\}");
 
-    /**
-     * Takes parameter of FQN and returns extracted classname.
-     *
-     * @param className Fully qualified name
-     * @return Class name
-     */
-    public static String getClassNameFromFQN(String className){
-        if(StringUtils.isEmpty(className)){
-            return StringUtils.EMPTY;
-        }
+	/**
+	 * Takes parameter of FQN and returns extracted classname.
+	 *
+	 * @param className Fully qualified name
+	 * @return Class name
+	 */
+	public static String getClassNameFromFQN(String className) {
+		if (StringUtils.isEmpty(className)) {
+			return StringUtils.EMPTY;
+		}
 
-        int pos = className.lastIndexOf ('.') + 1;
+		int pos = className.lastIndexOf('.') + 1;
 
-        return className.substring(pos);
-    }
+		return className.substring(pos);
+	}
 
-    /**
-     *  Transforms parametres/tokens in provided text
-     *  to values from map according to name {test} => value
-     *
-     * @param text String for url replacement
-     * @param valuesByKey Map of parameter value pairs
-     * @return String with replaced values
-     */
-    public static String replaceParametres(String text, Map<String, Object> valuesByKey) {
-        StringBuilder output = new StringBuilder();
-        Matcher tokenMatcher = parameterPattern.matcher(text);
+	/**
+	 * Transforms parametres/tokens in provided text
+	 * to values from map according to name {test} => value
+	 *
+	 * @param text        String for url replacement
+	 * @param valuesByKey Map of parameter value pairs
+	 * @return String with replaced values
+	 */
+	public static String replaceParametres(String text, Map<String, Object> valuesByKey) {
+		StringBuilder output = new StringBuilder();
+		Matcher tokenMatcher = parameterPattern.matcher(text);
 
-        int cursor = 0;
-        while (tokenMatcher.find()) {
+		int cursor = 0;
+		while (tokenMatcher.find()) {
 
-            // A token is defined as a sequence of the format "{...}".
-            // A key is defined as the content between the brackets.
-            int tokenStart = tokenMatcher.start();
-            int tokenEnd = tokenMatcher.end();
-            int keyStart = tokenMatcher.start(1);
-            int keyEnd = tokenMatcher.end(1);
+			// A token is defined as a sequence of the format "{...}".
+			// A key is defined as the content between the brackets.
+			int tokenStart = tokenMatcher.start();
+			int tokenEnd = tokenMatcher.end();
+			int keyStart = tokenMatcher.start(1);
+			int keyEnd = tokenMatcher.end(1);
 
-            output.append(text.substring(cursor, tokenStart));
+			output.append(text.substring(cursor, tokenStart));
 
-            String token = text.substring(tokenStart, tokenEnd);
-            String key = text.substring(keyStart, keyEnd);
+			String token = text.substring(tokenStart, tokenEnd);
+			String key = text.substring(keyStart, keyEnd);
 
-            if (valuesByKey.containsKey(key)) {
-                Object value = valuesByKey.get(key);
-                output.append(String.valueOf(value));
-            } else {
-                output.append(token);
-            }
+			if (valuesByKey.containsKey(key)) {
+				Object value = valuesByKey.get(key);
+				output.append(String.valueOf(value));
+			} else {
+				output.append(token);
+			}
 
-            cursor = tokenEnd;
-        }
+			cursor = tokenEnd;
+		}
 
-        output.append(text.substring(cursor));
+		output.append(text.substring(cursor));
 
-        return output.toString();
-    }
+		return output.toString();
+	}
 }
