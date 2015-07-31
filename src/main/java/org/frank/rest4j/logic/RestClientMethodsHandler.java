@@ -3,10 +3,6 @@ package org.frank.rest4j.logic;
 import org.frank.rest4j.annotation.Action;
 import org.frank.rest4j.annotation.Client;
 import org.frank.rest4j.annotation.Param;
-import org.frank.rest4j.annotation.methods.DELETE;
-import org.frank.rest4j.annotation.methods.GET;
-import org.frank.rest4j.annotation.methods.POST;
-import org.frank.rest4j.annotation.methods.PUT;
 import org.frank.rest4j.constant.Format;
 import org.frank.rest4j.exception.MethodCallException;
 import org.slf4j.LoggerFactory;
@@ -30,12 +26,6 @@ public class RestClientMethodsHandler implements InvocationHandler {
 	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestClientMethodsHandler.class);
 
 	private static final RestTemplate restTemplate = new RestTemplate();
-	private static final Class[] httpMethodAnnotations = new Class[]{
-			GET.class,
-			POST.class,
-			PUT.class,
-			DELETE.class
-	};
 
 	private String serverUrl;
 	private Format format;
@@ -118,7 +108,6 @@ public class RestClientMethodsHandler implements InvocationHandler {
 		return parameterMap;
 	}
 
-
 	/**
 	 * Scans provided interface for rest actions and generate map of them for
 	 * faster access during invocation.
@@ -132,23 +121,22 @@ public class RestClientMethodsHandler implements InvocationHandler {
 		Method[] clientMethods = sourceInterface.getMethods();
 		for (Method method : clientMethods) {
 			Action action = method.getAnnotation(Action.class);
+			HttpMethod httpMethod = action.method();
 
-			if(method.isAnnotationPresent(GET.class) ||
+			if(method.isAnnotationPresent(org.frank.rest4j.annotation.Method.class)){
+				httpMethod = method.getAnnotation(org.frank.rest4j.annotation.Method.class).value();
+			}
 
 			if (action != null) {
 				RestMethod restMethod = new RestMethod();
 				restMethod.setUrlFragment(action.value());
-				restMethod.setMethod(action.method());
-				restMethod.setSuccessStatus(action.successStatus());
+				restMethod.setMethod(httpMethod);
+				restMethod.setSuccessStatus(action.status());
 				restMethod.setReturnType(method.getReturnType().getName().equals("void") ? null : method.getReturnType());
 				tempMethodMap.put(method.getName(), restMethod);
 			}
 		}
 
 		return tempMethodMap;
-	}
-
-	private HttpMethod findHttpMethodsOnMethod(Method method){
-		for(int i = 0; i < )
 	}
 }
