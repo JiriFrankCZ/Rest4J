@@ -1,10 +1,14 @@
 package org.frank.rest4j.context;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.frank.rest4j.repository.config.annotation.RestRepositoryRegistrar;
+import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.*;
 
 @Retention(value = RetentionPolicy.RUNTIME)
-//@Import()
+@Documented
+@Target(ElementType.TYPE)
+@Import(RestRepositoryRegistrar.class)
 public @interface EnableRestProxies {
-	String name();
+	String value();
 }

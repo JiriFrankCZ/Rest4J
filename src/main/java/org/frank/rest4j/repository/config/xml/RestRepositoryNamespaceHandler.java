@@ -1,13 +1,11 @@
 package org.frank.rest4j.repository.config.xml;
 
-import org.frank.rest4j.annotation.Client;
-import org.frank.rest4j.construction.RestInterfaceProxyFactory;
+import org.frank.rest4j.constant.Constants;
 import org.frank.rest4j.repository.ComponentsScanner;
-import org.frank.rest4j.repository.GenericMethodInvokingFactoryBean;
+import org.frank.rest4j.repository.config.BeanDefinitionFactory;
 import org.frank.rest4j.util.CommonsUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -22,20 +20,16 @@ import java.util.Set;
  * Created by Jiøí on 7. 7. 2015.
  */
 public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
-
 	private final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestRepositoryNamespaceHandler.class);
 
-	private static final Class DEFAULT_ANNOTATION_FILTER = Client.class;
-
-	private static final String BASE_PACKAGE_ATTRIBUTE_NAME = "basePackage";
-	private static final Class FACTORY_CLASS = RestInterfaceProxyFactory.class;
-	private static final String FACTORY_METHOD_NAME = "createInstance";
-
+	protected static final String BASE_PACKAGE_ATTRIBUTE_NAME = "basePackage";
 
 	private ComponentsScanner componentsScanner;
+	private BeanDefinitionFactory beanDefinitionFactory;
 
 	public void init() {
-		componentsScanner = new ComponentsScanner(DEFAULT_ANNOTATION_FILTER);
+		componentsScanner = new ComponentsScanner(Constants.DEFAULT_ANNOTATION_FILTER);
+		beanDefinitionFactory = new BeanDefinitionFactory(Constants.FACTORY_CLASS, Constants.FACTORY_METHOD_NAME);
 		registerBeanDefinitionParser("repositories", new RestRepositoryBeanDefinitionParser());
 	}
 
@@ -53,7 +47,7 @@ public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
 				BeanDefinitionRegistry beanDefinitionRegistry = parserContext.getRegistry();
 
 				for (String interfaceName : interfaces) {
-					BeanDefinition beanDefinition = createBeanDefinition(interfaceName);
+					BeanDefinition beanDefinition = beanDefinitionFactory.createBeanDefinition(interfaceName);
 
 					if (beanDefinition != null) {
 						beanDefinitionRegistry.registerBeanDefinition(
@@ -65,34 +59,5 @@ public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
 			}
 			return null;
 		}
-	}
-
-	/**
-	 * Creates definition for factory GenericMethodInvokingFactoryBean which then creates dynamic proxy
-	 * based on interfaces provided as param.
-	 *
-	 * @param interfaceName
-	 * @return Factory bean definition
-	 */
-	private BeanDefinition createBeanDefinition(String interfaceName) {
-
-		BeanDefinition beanDefinition = null;
-		try {
-			Class interfaceClass = Class.forName(interfaceName);
-
-			beanDefinition = BeanDefinitionBuilder
-					.rootBeanDefinition(GenericMethodInvokingFactoryBean.class)
-					.addPropertyValue("targetClass", FACTORY_CLASS)
-					.addPropertyValue("targetMethod", FACTORY_METHOD_NAME)
-					.addPropertyValue("targetType", interfaceClass)
-					.addPropertyValue("arguments", interfaceClass)
-					.setLazyInit(false)
-					.getBeanDefinition();
-
-		} catch (ClassNotFoundException e) {
-			Logger.error("Interface couldn´t be resolved for {}.", interfaceName);
-		}
-
-		return beanDefinition;
 	}
 }
