@@ -1,9 +1,13 @@
 package org.frank.rest4j.repository.config;
 
 import org.frank.rest4j.repository.GenericMethodInvokingFactoryBean;
+import org.frank.rest4j.util.CommonsUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+
+import java.util.Set;
 
 /**
  * Created by FrankJ on 31.7.2015.
@@ -20,13 +24,35 @@ public class BeanDefinitionFactory {
 	}
 
 	/**
+	 * Creates bean definitions and assign them to the context
+	 *
+	 * @param beanDefinitionRegistry
+	 * @param interfaces
+	 */
+	public void registerInterfaces(BeanDefinitionRegistry beanDefinitionRegistry, Set<String> interfaces) {
+		if (interfaces != null && interfaces.size() > 0) {
+
+			for (String interfaceName : interfaces) {
+				BeanDefinition beanDefinition = createBeanDefinition(interfaceName);
+
+				if (beanDefinition != null) {
+					beanDefinitionRegistry.registerBeanDefinition(
+							CommonsUtil.getClassNameFromFQN(interfaceName),
+							beanDefinition
+					);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Creates definition for factory GenericMethodInvokingFactoryBean which then creates dynamic proxy
 	 * based on interfaces provided as param.
 	 *
 	 * @param interfaceName
 	 * @return Factory bean definition
 	 */
-	public BeanDefinition createBeanDefinition(String interfaceName) {
+	private BeanDefinition createBeanDefinition(String interfaceName) {
 
 		BeanDefinition beanDefinition = null;
 		try {

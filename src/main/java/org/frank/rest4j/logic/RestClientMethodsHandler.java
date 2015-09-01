@@ -1,5 +1,8 @@
 package org.frank.rest4j.logic;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.frank.rest4j.annotation.Action;
 import org.frank.rest4j.annotation.Client;
 import org.frank.rest4j.annotation.Param;
@@ -8,6 +11,8 @@ import org.frank.rest4j.exception.MethodCallException;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,7 +30,7 @@ public class RestClientMethodsHandler implements InvocationHandler {
 
 	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestClientMethodsHandler.class);
 
-	private static final RestTemplate restTemplate = new RestTemplate();
+	private final RestTemplate restTemplate = new RestTemplate();
 
 	private String serverUrl;
 	private Format format;
@@ -33,12 +38,40 @@ public class RestClientMethodsHandler implements InvocationHandler {
 	private Map<String, RestMethod> methodsMap;
 
 	public RestClientMethodsHandler(Class interfaceClass) {
+		// Init values from annotation
 		Client client = (Client) interfaceClass.getAnnotation(Client.class);
 
 		serverUrl = client.value();
 		format = client.format();
 
+		// create HashMap of method for faster processing
 		methodsMap = createMethodMap(interfaceClass);
+
+
+		switch (client.authentificationType()){
+			case BASIC:
+				Logger.info("Basic authentification for " + serverUrl);
+
+			case NONE:
+			default:
+				Logger.info("No authentification for " + serverUrl);
+		}
+
+
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+		httpClient.get
+
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+		restTemplate.setRequestFactory(requestFactory);
+
+
+		// set authentification if neede
+		HttpComponentsClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
+		//DefaultHttpClient httpClient =				(DefaultHttpClient) requestFactory.getHttpClient();
+//		httpClient.getCredentialsProvider().setCredentials(
+//				new AuthScope(host, port, AuthScope.ANY_REALM),
+//				new UsernamePasswordCredentials("name", "pass"));
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args) throws Exception {

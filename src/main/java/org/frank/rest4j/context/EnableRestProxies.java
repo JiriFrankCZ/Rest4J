@@ -11,4 +11,5 @@ import java.lang.annotation.*;
 @Import(RestRepositoryRegistrar.class)
 public @interface EnableRestProxies {
 	String value();
+
 }

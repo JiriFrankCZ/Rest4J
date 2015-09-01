@@ -3,10 +3,8 @@ package org.frank.rest4j.repository.config.xml;
 import org.frank.rest4j.constant.Constants;
 import org.frank.rest4j.repository.ComponentsScanner;
 import org.frank.rest4j.repository.config.BeanDefinitionFactory;
-import org.frank.rest4j.util.CommonsUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -43,21 +41,10 @@ public class RestRepositoryNamespaceHandler extends NamespaceHandlerSupport {
 
 			Set<String> interfaces = componentsScanner.scan(basePackage);
 
-			if (interfaces != null && interfaces.size() > 0) {
-				BeanDefinitionRegistry beanDefinitionRegistry = parserContext.getRegistry();
+			beanDefinitionFactory.registerInterfaces(parserContext.getRegistry(), interfaces);
 
-				for (String interfaceName : interfaces) {
-					BeanDefinition beanDefinition = beanDefinitionFactory.createBeanDefinition(interfaceName);
-
-					if (beanDefinition != null) {
-						beanDefinitionRegistry.registerBeanDefinition(
-								CommonsUtil.getClassNameFromFQN(interfaceName),
-								beanDefinition
-						);
-					}
-				}
-			}
 			return null;
 		}
+
 	}
 }
