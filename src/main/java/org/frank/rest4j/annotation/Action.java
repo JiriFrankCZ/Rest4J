@@ -11,6 +11,8 @@ import java.lang.annotation.*;
 public @interface Action {
 	String value();
 
+	boolean async() default false;
+
 	HttpStatus status() default HttpStatus.OK;
 
 	HttpMethod method() default HttpMethod.GET;

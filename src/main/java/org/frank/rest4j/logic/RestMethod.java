@@ -16,6 +16,8 @@ public class RestMethod {
 
 	private Class returnType;
 
+	private boolean async;
+
 	public String getUrlFragment() {
 		return urlFragment;
 	}
@@ -50,5 +52,13 @@ public class RestMethod {
 
 	public void setSuccessStatus(HttpStatus successStatus) {
 		this.successStatus = successStatus;
+	}
+
+	public boolean isAsync() {
+		return async;
+	}
+
+	public void setAsync(boolean async) {
+		this.async = async;
 	}
 }

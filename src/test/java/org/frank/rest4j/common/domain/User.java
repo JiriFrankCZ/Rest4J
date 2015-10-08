@@ -5,7 +5,7 @@ package org.frank.rest4j.common.domain;
  */
 
 
-public class Client {
+public class User {
 	private int id;
 
 	private String name;

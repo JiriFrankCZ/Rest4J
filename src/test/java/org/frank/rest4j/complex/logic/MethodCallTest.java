@@ -1,6 +1,6 @@
 package org.frank.rest4j.complex.logic;
 
-import org.frank.rest4j.common.domain.Client;
+import org.frank.rest4j.common.domain.User;
 import org.frank.rest4j.common.service.SampleService;
 import org.frank.rest4j.common.source.SampleInterface1;
 import org.frank.rest4j.exception.MethodCallException;
@@ -15,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.ws.rs.core.Application;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by FrankJ on 22.7.2015.
@@ -33,13 +35,13 @@ public class MethodCallTest extends JerseyTest {
 	}
 
 	@Test
-	public void testGetCallWithParam() {
+	public void testGetCallWithParam() throws ExecutionException, InterruptedException {
 		final int clientId = 10;
 
-		Client client = sampleInterface1.get(clientId);
+		Future<User> user = sampleInterface1.get(clientId);
 
-		Assert.assertNotNull(client);
-		Assert.assertEquals(clientId, client.getId());
+		Assert.assertNotNull(user);
+		Assert.assertEquals(clientId, user.get().getId());
 	}
 
 	@Test(expected = MethodCallException.class)

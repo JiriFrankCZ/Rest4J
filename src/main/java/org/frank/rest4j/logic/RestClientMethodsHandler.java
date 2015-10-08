@@ -1,7 +1,10 @@
 package org.frank.rest4j.logic;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.frank.rest4j.annotation.Action;
 import org.frank.rest4j.annotation.Client;
@@ -13,6 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +27,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Entry point for handling call of proxy methods
@@ -29,6 +37,8 @@ import java.util.Map;
 public class RestClientMethodsHandler implements InvocationHandler {
 
 	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RestClientMethodsHandler.class);
+
+	private ExecutorService executor = Executors.newFixedThreadPool(10);
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -58,17 +68,17 @@ public class RestClientMethodsHandler implements InvocationHandler {
 		}
 
 
-		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-
-		httpClient.get
-
-		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-		restTemplate.setRequestFactory(requestFactory);
-
-
-		// set authentification if neede
-		HttpComponentsClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
-		//DefaultHttpClient httpClient =				(DefaultHttpClient) requestFactory.getHttpClient();
+//		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+//
+//		//httpClient.get
+//
+//		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+//		restTemplate.setRequestFactory(requestFactory);
+//
+//		restTemplate.set
+//		// set authentification if neede
+//		HttpComponentsClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
+//		DefaultHttpClient httpClient =				(DefaultHttpClient) requestFactory.getHttpClient();
 //		httpClient.getCredentialsProvider().setCredentials(
 //				new AuthScope(host, port, AuthScope.ANY_REALM),
 //				new UsernamePasswordCredentials("name", "pass"));
@@ -80,8 +90,16 @@ public class RestClientMethodsHandler implements InvocationHandler {
 		RestMethod restMethod = methodsMap.get(method.getName());
 		String actionLink = restMethod.getLink(serverUrl);
 
-		Logger.debug("HTTP/{} {} {}", restMethod.getMethod(), actionLink, args);
+		Logger.debug("HTTP/{} {} async [{}] {}", restMethod.getMethod(), actionLink, restMethod.isAsync() , args);
 
+		if(restMethod.isAsync()){
+			return invokeSync(method, restMethod, actionLink, args);
+		}else{
+			return null;
+		}
+	}
+
+	private Object invokeSync(Method method, RestMethod restMethod, String actionLink, Object[] args) {
 		try {
 			ResponseEntity responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method, args));
 
@@ -100,9 +118,31 @@ public class RestClientMethodsHandler implements InvocationHandler {
 						e.getResponseBodyAsString()
 				);
 			}
-
 		}
 	}
+
+	@Async
+	public Future<Object> invokeAsync(Method method, RestMethod restMethod, String actionLink, Object[] args) {
+		try {
+			ResponseEntity responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method, args));
+			return new AsyncResult<Object>(responseEntity.getBody());
+
+		}catch (HttpClientErrorException e){
+			if (e.getStatusCode().equals(restMethod.getSuccessStatus())) {
+				return new AsyncResult<Object>(e.getResponseBodyAsString());
+			}else{
+				Logger.error("Error occured during method call. Status returned {}.", e.getStatusCode());
+
+				throw new MethodCallException(
+						restMethod.getSuccessStatus(),
+						e.getStatusCode(),
+						e.getResponseHeaders(),
+						e.getResponseBodyAsString()
+				);
+			}
+		}
+	}
+
 
 	/**
 	 * This method prepare parameter map (key value pairs - name of parameter and parameter value)
@@ -166,6 +206,7 @@ public class RestClientMethodsHandler implements InvocationHandler {
 				restMethod.setMethod(httpMethod);
 				restMethod.setSuccessStatus(action.status());
 				restMethod.setReturnType(method.getReturnType().getName().equals("void") ? null : method.getReturnType());
+				restMethod.setAsync(action.async());
 				tempMethodMap.put(method.getName(), restMethod);
 			}
 		}

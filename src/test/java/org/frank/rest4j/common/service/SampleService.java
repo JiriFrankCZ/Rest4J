@@ -1,12 +1,12 @@
 package org.frank.rest4j.common.service;
 
-import org.frank.rest4j.common.domain.Client;
+import org.frank.rest4j.common.domain.User;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by Jiøí on 26. 7. 2015.
+ * Created by Jiï¿½ï¿½ on 26. 7. 2015.
  */
 
 @Path("/test")
@@ -24,11 +24,11 @@ public class SampleService {
 	@Path("/clients/{id}")
 	@Consumes("application/json")
 	@Produces("application/json")
-	public Client view(@PathParam("id") int id) {
-		Client client = new Client();
-		client.setId(id);
-		client.setName("Test client");
-		return client;
+	public User view(@PathParam("id") int id) {
+		User user = new User();
+		user.setId(id);
+		user.setName("Test user");
+		return user;
 	}
 
 }
