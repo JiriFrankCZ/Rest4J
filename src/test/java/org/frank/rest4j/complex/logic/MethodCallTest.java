@@ -38,11 +38,24 @@ public class MethodCallTest extends JerseyTest {
 	public void testGetCallWithParam() throws ExecutionException, InterruptedException {
 		final int clientId = 10;
 
-		Future<User> user = sampleInterface1.get(clientId);
+		User user = sampleInterface1.get(clientId);
 
 		Assert.assertNotNull(user);
-		Assert.assertEquals(clientId, user.get().getId());
+		Assert.assertEquals(clientId, user.getId());
 	}
+
+	@Test
+	public void testAsyncGetCallWithParam() throws ExecutionException, InterruptedException {
+		final int clientId = 10;
+
+		Future<User> futureUser = sampleInterface1.getAsync(clientId);
+
+		User user = futureUser.get();
+
+		Assert.assertNotNull(user);
+		Assert.assertEquals(clientId, user.getId());
+	}
+
 
 	@Test(expected = MethodCallException.class)
 	public void testErroredGetCall() {

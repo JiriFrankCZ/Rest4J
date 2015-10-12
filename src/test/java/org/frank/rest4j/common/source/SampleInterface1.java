@@ -16,8 +16,12 @@ import java.util.concurrent.Future;
 public interface SampleInterface1 {
 
 	@Method(HttpMethod.GET)
+	@Action(value = "/clients/{id}")
+	User get(@Param("id") int id);
+
+	@Method(HttpMethod.GET)
 	@Action(value = "/clients/{id}", async = true)
-	Future<User> get(@Param("id") int id);
+	Future<User> getAsync(@Param("id") int id);
 
 	@Action(value = "/clients/delete/{id}")
 	void delete(@Param("id") int id);

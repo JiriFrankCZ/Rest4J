@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,15 +94,15 @@ public class RestClientMethodsHandler implements InvocationHandler {
 		Logger.debug("HTTP/{} {} async [{}] {}", restMethod.getMethod(), actionLink, restMethod.isAsync() , args);
 
 		if(restMethod.isAsync()){
-			return invokeSync(method, restMethod, actionLink, args);
+			return invokeAsync(method, restMethod, actionLink, args);
 		}else{
-			return null;
+			return this.invokeSync(method, restMethod, actionLink, args);
 		}
 	}
 
 	private Object invokeSync(Method method, RestMethod restMethod, String actionLink, Object[] args) {
 		try {
-			ResponseEntity responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method, args));
+			ResponseEntity<Object> responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method, args));
 
 			return responseEntity.getBody();
 
@@ -124,7 +125,9 @@ public class RestClientMethodsHandler implements InvocationHandler {
 	@Async
 	public Future<Object> invokeAsync(Method method, RestMethod restMethod, String actionLink, Object[] args) {
 		try {
-			ResponseEntity responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method, args));
+
+			ResponseEntity<Object> responseEntity = restTemplate.exchange(actionLink, restMethod.getMethod(), null, restMethod.getReturnType(), createParameterMap(method, args));
+
 			return new AsyncResult<Object>(responseEntity.getBody());
 
 		}catch (HttpClientErrorException e){
@@ -201,11 +204,19 @@ public class RestClientMethodsHandler implements InvocationHandler {
 			}
 
 			if (action != null) {
+				Class returnType = null;
+				boolean genericMethodType = method.getGenericReturnType().equals(method.getReturnType());
+				if(!method.getReturnType().getName().equals("void") && genericMethodType){
+					returnType = method.getReturnType();
+				}else if(!genericMethodType){
+					returnType = (Class) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+				}
+
 				RestMethod restMethod = new RestMethod();
 				restMethod.setUrlFragment(action.value());
 				restMethod.setMethod(httpMethod);
 				restMethod.setSuccessStatus(action.status());
-				restMethod.setReturnType(method.getReturnType().getName().equals("void") ? null : method.getReturnType());
+				restMethod.setReturnType(returnType);
 				restMethod.setAsync(action.async());
 				tempMethodMap.put(method.getName(), restMethod);
 			}
